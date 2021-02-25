@@ -22,47 +22,85 @@
     integrity="sha512-xRllwz2gdZciIB+AkEbeq+gVhX8VB8XsfqeFbUh+SzHlN96dEduwtTuVuc2u9EROlmW9+yhRlxjif66ORpsgVA=="
     crossorigin="anonymous"
   ></script>
+  <script src="https://player.vimeo.com/api/player.js"></script>
 </head>
 <body>
-    <div class="container__main">
-      <div class="container__inner">
-        <div id="chessboards"></div>
-      </div>
+  <!-- <div class="container__video">
+
+  </div> -->
+  <div class="container">
+    <iframe
+    src="https://player.vimeo.com/video/516639774"
+    width="800"
+    height="500"
+    frameborder="0"
+    allow="autoplay; fullscreen; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+  </div>
+  <div class="container__main">
+    <div class="container__inner">
+      <div id="chessboards"></div>
     </div>
-      <!-- The Modal -->
-      <div class="modal" id="myModal">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <!-- Modal Header -->
-            <!-- <div class="modal-header">
+  </div>
+  <!-- The Modal -->
+  <div class="modal" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <!-- <div class="modal-header">
           <h4 class="modal-title">Modal Heading</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div> -->
-  
-            <!-- Modal body -->
-            <div class="modal-body">
-              <!-- <video
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="container__main">
+            <div class="container__inner">
+              <div id="chessboards"></div>
+            </div>
+          </div>
+          <!-- <video
                 autoplay
                 controls
                 src="https://vimeo.com/user134468337/review/516639774/c2daff9017"
                 width="100%"
               ></video> -->
-              <iframe src="https://player.vimeo.com/video/516639774" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-            </div>
-          </div>
+          <!-- <iframe src="https://player.vimeo.com/video/516639774" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe> -->
         </div>
       </div>
+    </div>
+  </div>
   <button
-    style="display: none;"
+    style="display: none"
     id="startButton"
     class="btn btn-primary btnprimary"
-    data-toggle="modal"
-    data-target="#myModal"
   >
-    Start
+    Play Chess
   </button>
+
   <script src="chessboardjs/js/chessboard-1.0.0.js"></script>
   <script>
+    // Vimeo video handler
+    var iframe = document.querySelector('iframe');
+    var player = new Vimeo.Player(iframe);
+    let interval;
+    player.on('play', function () {
+      interval = setInterval(() => {
+        player
+          .getCurrentTime()
+          .then(function (seconds) {
+            if (seconds > 66) {
+              $('#startButton').css('display', 'block');
+            }
+          })
+          .catch(function (error) {
+            // an error occurred
+          });
+      }, 1000);
+    });
+
+    // Chessboard handler
     var board = null;
     var game = new Chess();
 
@@ -70,7 +108,7 @@
       // do not pick up pieces if the game is over
       if (game.game_over()) {
         // alert('game over')
-        $('#startButton').css('display', 'block');
+        player.play();
         return false;
       }
 
@@ -119,8 +157,12 @@
       onDrop: onDrop,
       onSnapEnd: onSnapEnd,
     };
-    board = Chessboard('chessboards', config)
-    board.resize()
+
+    $('#startButton').click(function () {
+      player.pause();
+      board = Chessboard('chessboards', config);
+      board.resize();
+    });
   </script>
 
   <!-- <script>
