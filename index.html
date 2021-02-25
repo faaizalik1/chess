@@ -108,6 +108,7 @@
       // do not pick up pieces if the game is over
       if (game.game_over()) {
         // alert('game over')
+        $('#chessboards').remove()
         player.play();
         return false;
       }
