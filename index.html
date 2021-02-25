@@ -1,0 +1,149 @@
+<head>
+  <meta charset="utf-8" />
+  <title></title>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="chessboardjs/css/chessboard-1.0.0.min.css"
+  />
+
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+    integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"
+    integrity="sha512-xRllwz2gdZciIB+AkEbeq+gVhX8VB8XsfqeFbUh+SzHlN96dEduwtTuVuc2u9EROlmW9+yhRlxjif66ORpsgVA=="
+    crossorigin="anonymous"
+  ></script>
+</head>
+<body>
+    <div class="container__main">
+      <div class="container__inner">
+        <div id="chessboards"></div>
+      </div>
+    </div>
+      <!-- The Modal -->
+      <div class="modal" id="myModal">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <!-- Modal Header -->
+            <!-- <div class="modal-header">
+          <h4 class="modal-title">Modal Heading</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div> -->
+  
+            <!-- Modal body -->
+            <div class="modal-body">
+              <!-- <video
+                autoplay
+                controls
+                src="https://vimeo.com/user134468337/review/516639774/c2daff9017"
+                width="100%"
+              ></video> -->
+              <iframe src="https://player.vimeo.com/video/516639774" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+  <button
+    id="startButton"
+    class="btn btn-primary btnprimary"
+    data-toggle="modal"
+    data-target="#myModal"
+  >
+    Start
+  </button>
+  <script src="chessboardjs/js/chessboard-1.0.0.js"></script>
+  <script>
+    var board = null;
+    var game = new Chess();
+
+    function onDragStart(source, piece, position, orientation) {
+      // do not pick up pieces if the game is over
+      if (game.game_over()) {
+        // alert('game over')
+        $('#startButton').css('display', 'block');
+        return false;
+      }
+
+      console.log(game.pgn());
+
+      // only pick up pieces for White
+      if (piece.search(/^b/) !== -1) return false;
+    }
+
+    function makeRandomMove() {
+      var possibleMoves = game.moves();
+
+      // game over
+      if (possibleMoves.length === 0) return;
+
+      var randomIdx = Math.floor(Math.random() * possibleMoves.length);
+      game.move(possibleMoves[randomIdx]);
+      board.position(game.fen());
+    }
+
+    function onDrop(source, target) {
+      // see if the move is legal
+      var move = game.move({
+        from: source,
+        to: target,
+        promotion: 'q', // NOTE: always promote to a queen for example simplicity
+      });
+
+      // illegal move
+      if (move === null) return 'snapback';
+
+      // make random legal move for black
+      window.setTimeout(makeRandomMove, 250);
+    }
+
+    // update the board position after the piece snap
+    // for castling, en passant, pawn promotion
+    function onSnapEnd() {
+      board.position(game.fen());
+    }
+
+    var config = {
+      draggable: true,
+      position: 'start',
+      onDragStart: onDragStart,
+      onDrop: onDrop,
+      onSnapEnd: onSnapEnd,
+    };
+    board = Chessboard('chessboards', config)
+    board.resize()
+  </script>
+
+  <!-- <script>
+    var board = null;
+    var game = new Chess();
+    function makeRandomMove() {
+      var possibleMoves = game.moves();
+
+      // exit if the game is over
+      if (game.game_over()) {
+        // $('#chessboards').css('display', 'none')
+        $('#startButton').css('display', 'block');
+        return false;
+      }
+
+      var randomIdx = Math.floor(Math.random() * possibleMoves.length);
+      game.move(possibleMoves[randomIdx]);
+      board.position(game.fen());
+
+      window.setTimeout(makeRandomMove, 500);
+    }
+
+    board = Chessboard('chessboards', 'start');
+
+    window.setTimeout(makeRandomMove, 500);
+  </script> -->
+</body>
