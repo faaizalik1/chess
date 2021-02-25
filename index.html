@@ -84,20 +84,29 @@
     // Vimeo video handler
     var iframe = document.querySelector('iframe');
     var player = new Vimeo.Player(iframe);
-    let interval;
+    let interval = 1;
     player.on('play', function () {
-      interval = setInterval(() => {
+      if(interval === 1) {
+        interval = setInterval(() => {
         player
           .getCurrentTime()
           .then(function (seconds) {
+            console.log(seconds)
             if (seconds > 66) {
-              $('#startButton').css('display', 'block');
+              if(interval === 0) {
+                $('#startButton').css('opacity', 0)
+              } else {
+                $('#startButton').css('display', 'block');
+              }
+              clearInterval(interval)
+              interval = 0
             }
           })
           .catch(function (error) {
             // an error occurred
           });
       }, 1000);
+      }
     });
 
     // Chessboard handler
@@ -113,7 +122,6 @@
         return false;
       }
 
-      console.log(game.pgn());
 
       // only pick up pieces for White
       if (piece.search(/^b/) !== -1) return false;
@@ -163,6 +171,11 @@
       player.pause();
       board = Chessboard('chessboards', config);
       board.resize();
+
+      setTimeout(() => {
+      $('#startButton').css('opacity', 0)
+        
+      }, 1500);
     });
   </script>
 
