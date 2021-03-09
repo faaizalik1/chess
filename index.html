@@ -141,7 +141,6 @@
     let isMoved = 0
 
     function onDrop(source, target) {
- 
       // see if the move is legal
       var move = game.move({
         from: source,
@@ -152,10 +151,11 @@
       if(isMoved === 0) {
         game.load('1kr1qb1r/ppp1p1pp/2np4/1B2pb1n/6P1/2NP1P2/PPPB3P/R2QK1NR b KQ - 0 1')
         isMoved = 1 
+      } else {
+              // illegal move
+      if (move === null) return 'snapback';
       }
 
-      // illegal move
-      if (move === null) return 'snapback';
 
       // make random legal move for black
       window.setTimeout(makeRandomMove, 250);
@@ -169,7 +169,6 @@
 
     var config = {
       draggable: true,
-      // position: 'start',
       position: '1kr1qb1r/ppp1p1pp/2np4/1B2pb1n/6P1/2NP1P2/PPPB3P/R2QK1NR b KQ - 0 1',
       onDragStart: onDragStart,
       onDrop: onDrop,
@@ -183,7 +182,7 @@
       board.resize();
 
       setTimeout(() => {
-        
+
       $('#startButton').css('opacity', 0)
         
       }, 1500);
